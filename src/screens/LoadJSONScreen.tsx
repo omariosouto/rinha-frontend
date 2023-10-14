@@ -8,39 +8,7 @@ interface LoadJSONScreenProps {
   setJSONFile: (jsonFile: JSONFile) => void;
 }
 export function LoadJSONScreen({ error, setError, setJSONFile }: LoadJSONScreenProps) {
-  const jsonFileReader = new FileReader();
   const fileName = React.useRef("");
-
-  React.useEffect(() => {
-    function readerProgressHandler(e: ProgressEvent<FileReader>) {
-      if (e.lengthComputable) {
-        const percentLoaded = Math.round((e.loaded / e.total) * 100);
-        console.log(percentLoaded);
-      }
-    }
-
-    function readerLoadHandler(e: ProgressEvent<FileReader>) {
-      const fileContent = e.target.result as string;
-      try {
-        JSON.parse(fileContent);
-        globalThis.jsonFileContent = fileContent;
-        setJSONFile({
-          contentGlobalKey: "jsonFileContent",
-          name: fileName.current,
-        });
-        setError("");
-      } catch (err) {
-        setError("Invalid JSON file. Please load a valid JSON file.");
-      }
-    }
-
-    jsonFileReader.addEventListener("progress", readerProgressHandler);
-    jsonFileReader.addEventListener("load", readerLoadHandler);
-    return () => {
-      jsonFileReader.removeEventListener("progress", readerProgressHandler);
-      jsonFileReader.removeEventListener("load", readerLoadHandler);
-    }
-  }, []);
 
   return (
     <form>
@@ -74,6 +42,34 @@ export function LoadJSONScreen({ error, setError, setJSONFile }: LoadJSONScreenP
             }
 
             fileName.current = currentFile.name;
+
+            const jsonFileReader = new FileReader();
+
+            function readerProgressHandler(e: ProgressEvent<FileReader>) {
+              if (e.lengthComputable) {
+                const percentLoaded = Math.round((e.loaded / e.total) * 100);
+                console.log(percentLoaded);
+              }
+            }
+        
+            function readerLoadHandler(e: ProgressEvent<FileReader>) {
+              const fileContent = e.target.result as string;
+              try {
+                JSON.parse(fileContent);
+                globalThis.jsonFileContent = fileContent;
+                setJSONFile({
+                  contentGlobalKey: "jsonFileContent",
+                  name: fileName.current,
+                });
+                setError("");
+              } catch (err) {
+                setError("Invalid JSON file. Please load a valid JSON file.");
+              }
+            }
+        
+            jsonFileReader.addEventListener("progress", readerProgressHandler);
+            jsonFileReader.addEventListener("load", readerLoadHandler);
+
             jsonFileReader.readAsText(currentFile, "UTF-8");
 
             setError("");
