@@ -1,8 +1,6 @@
 import { JSONFile } from "@src/domain/JSONFile";
 import React from "react";
 
-const jsonFileReader = new FileReader();
-
 interface LoadJSONScreenProps {
   error: string;
   setError: (error: string) => void;
@@ -10,6 +8,7 @@ interface LoadJSONScreenProps {
   setJSONFile: (jsonFile: JSONFile) => void;
 }
 export function LoadJSONScreen({ error, setError, setJSONFile }: LoadJSONScreenProps) {
+  const jsonFileReader = new FileReader();
   const fileName = React.useRef("");
 
   React.useEffect(() => {
